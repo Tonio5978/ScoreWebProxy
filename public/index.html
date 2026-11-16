@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ScoreWeb · Scores NBA et football en direct</title>
+<meta name="description" content="Scores en direct, résultats, programme et classements de la NBA et du football.">
+<meta name="theme-color" content="#07090d">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body data-view="matches">
+<header>
+  <div class="wrap">
+    <div class="top">
+      <a class="brand" href="#football" aria-label="ScoreWeb, accueil"><i aria-hidden="true">S</i><span>Score <b>Web</b></span></a>
+      <div class="livedot" id="livedot">EN DIRECT</div>
+      <div class="spacer"></div>
+      <nav class="tabs" id="sporttabs" aria-label="Sport"></nav>
+    </div>
+    <nav class="sub" id="chips" aria-label="Compétitions"></nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="views" id="views" hidden>
+    <nav class="tabs" aria-label="Affichage">
+      <button type="button" data-view="matches" class="on">Matchs</button>
+      <button type="button" data-view="table">Classement</button>
+    </nav>
+  </div>
+  <div id="app" aria-live="polite"><div class="empty">Chargement des matchs…</div></div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span id="status"></span>
+    <span>Données : ESPN via le proxy info-orbs · heures de Paris</span>
+  </div>
+</footer>
+
+<script type="module" src="/js/app.js"></script>
+</body>
+</html>

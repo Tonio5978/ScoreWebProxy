@@ -1,0 +1,51 @@
+{
+  "football": {
+    "chips": [
+      {"key": "ligue1", "name": "Ligue 1", "competitions": ["ligue1"]},
+      {"key": "ligue2", "name": "Ligue 2", "competitions": ["ligue2"]},
+      {"key": "epl", "name": "Premier League", "competitions": ["epl"]},
+      {"key": "laliga", "name": "LaLiga", "competitions": ["laliga"]},
+      {"key": "serieA", "name": "Serie A", "competitions": ["serieA"]},
+      {"key": "bundesliga", "name": "Bundesliga", "competitions": ["bundesliga"]},
+      {"key": "ligaPortugal", "name": "Liga Portugal", "competitions": ["ligaPortugal"]},
+      {"key": "saudi", "name": "Saudi Pro League", "competitions": ["saudiProLeague"]},
+      {"key": "cl", "name": "Ligue des champions", "competitions": ["cl"]},
+      {"key": "el", "name": "Ligue Europa", "competitions": ["el"]},
+      {"key": "ecl", "name": "Ligue Conférence", "competitions": ["ecl"]},
+      {"key": "nations", "name": "Ligue des nations", "competitions": ["nationsLeague"]},
+      {"key": "selections", "name": "Euro & Mondial", "competitions": ["euroQualifying", "euro", "wcQualifyingUefa", "worldCup"]},
+      {"key": "coupes", "name": "Coupes", "competitions": ["coupeDeFrance", "faCup", "leagueCup", "copaDelRey", "coppaItalia", "dfbPokal", "tacaPortugal"]}
+    ],
+    "competitions": {
+      "ligue1": {"name": "Ligue 1", "short": "L1"},
+      "ligue2": {"name": "Ligue 2", "short": "L2"},
+      "coupeDeFrance": {"name": "Coupe de France", "short": "CDF", "standings": false},
+      "cl": {"name": "Ligue des champions", "short": "LDC"},
+      "el": {"name": "Ligue Europa", "short": "LE"},
+      "ecl": {"name": "Ligue Conférence", "short": "LCE"},
+      "epl": {"name": "Premier League", "short": "PL"},
+      "laliga": {"name": "LaLiga", "short": "LIGA"},
+      "serieA": {"name": "Serie A", "short": "SA"},
+      "bundesliga": {"name": "Bundesliga", "short": "BL"},
+      "ligaPortugal": {"name": "Liga Portugal", "short": "LP"},
+      "saudiProLeague": {"name": "Saudi Pro League", "short": "SPL"},
+      "tacaPortugal": {"name": "Coupe du Portugal", "short": "TP", "standings": false},
+      "coppaItalia": {"name": "Coupe d'Italie", "short": "CI", "standings": false},
+      "dfbPokal": {"name": "Coupe d'Allemagne", "short": "DFB", "standings": false},
+      "copaDelRey": {"name": "Coupe du Roi", "short": "CDR", "standings": false},
+      "faCup": {"name": "FA Cup", "short": "FA", "standings": false},
+      "leagueCup": {"name": "Carabao Cup", "short": "EFL", "standings": false},
+      "nationsLeague": {"name": "Ligue des nations", "short": "LDN"},
+      "euroQualifying": {"name": "Qualifications Euro", "short": "QEU"},
+      "euro": {"name": "Euro", "short": "EURO"},
+      "wcQualifyingUefa": {"name": "Qualifications Mondial (UEFA)", "short": "QCM"},
+      "worldCup": {"name": "Coupe du monde", "short": "CM"}
+    }
+  },
+  "nba": {
+    "chips": [
+      {"key": "east", "name": "Conférence Est", "conference": "East"},
+      {"key": "west", "name": "Conférence Ouest", "conference": "West"}
+    ]
+  }
+}

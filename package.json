@@ -1,0 +1,20 @@
+{
+  "name": "scoreweb",
+  "version": "1.0.0",
+  "description": "Scores NBA et football en direct, alimentés par le proxy info-orbs",
+  "private": true,
+  "type": "module",
+  "main": "server/index.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "test": "node --test"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "express": "4.22.3"
+  }
+}

@@ -1,0 +1,527 @@
+<title>ScoreWeb – Maquette & Architecture</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout : page de revue sombre (même univers que l'app) — 1. maquette desktop + mobile, 2. architecture, 3. points à valider */
+:root{
+  --bg:#07090d;--panel:#10141b;--panel2:#161b24;--line:#232a37;--text:#eef2f7;--muted:#8a95a8;--dim:#5c6678;
+  --accent:#24FFC1;--live:#ff3b4f;--gold:#ffc940;--blue:#6f8cff;--r:16px;
+  --cond:'Barlow Condensed',system-ui,sans-serif;--sans:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:400 15px/1.5 var(--sans);
+  background-image:radial-gradient(1200px 500px at 85% -10%,rgba(36,255,193,.07),transparent 60%),radial-gradient(900px 400px at -10% 0%,rgba(80,120,255,.06),transparent 60%);background-attachment:fixed}
+.page{max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 64px}
+h1,h2,h3{text-wrap:balance}
+.doc-head{display:flex;flex-direction:column;gap:8px;margin-bottom:28px}
+.eyebrow{font:700 13px/1 var(--cond);letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
+.doc-head h1{font:700 44px/1 var(--cond);letter-spacing:.02em;text-transform:uppercase;margin:0}
+.doc-head p{color:var(--muted);max-width:70ch;margin:0}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.toc a{text-decoration:none;color:var(--muted);font-weight:600;font-size:13px;padding:7px 14px;border:1px solid var(--line);border-radius:999px}
+.toc a:hover,.toc a:focus-visible{color:var(--accent);border-color:var(--accent);outline:none}
+section.block{margin-top:44px}
+section.block>h2{font:700 28px/1.1 var(--cond);letter-spacing:.06em;text-transform:uppercase;margin:0 0 6px;display:flex;gap:12px;align-items:baseline}
+section.block>h2 small{font:600 13px/1 var(--sans);letter-spacing:0;text-transform:none;color:var(--dim)}
+section.block>p.lead{color:var(--muted);margin:0 0 18px;max-width:75ch}
+code,.mono{font-family:var(--mono);font-size:.86em}
+code{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;color:#cfe;}
+
+/* ====== Cadre navigateur ====== */
+.frames{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;align-items:start}
+.browser{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--bg);box-shadow:0 30px 80px -40px rgba(0,0,0,.9)}
+.chrome{display:flex;align-items:center;gap:8px;padding:9px 12px;background:#0c1016;border-bottom:1px solid var(--line)}
+.chrome i{width:10px;height:10px;border-radius:50%;background:var(--line);display:block}
+.chrome .url{flex:1;margin-left:8px;font:500 12px/1 var(--mono);color:var(--dim);background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:6px 10px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.cap{font-size:12px;color:var(--dim);margin-top:8px;text-align:center}
+
+/* ====== App (maquette) ====== */
+.app{font-size:14px;background:var(--bg);background-image:radial-gradient(800px 300px at 85% -10%,rgba(36,255,193,.08),transparent 60%)}
+.app header{background:rgba(7,9,13,.86);border-bottom:1px solid var(--line)}
+.app .wrap{padding:0 18px}
+.top{display:flex;align-items:center;gap:14px;height:58px}
+.brand{display:flex;align-items:center;gap:10px;font:700 21px/1 var(--cond);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.brand .logo{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:linear-gradient(140deg,var(--accent),#1a7f6a 60%,#0f2b2a);color:#03241b;font:700 15px/1 var(--cond)}
+.brand b{color:var(--accent)}
+.livedot{display:flex;align-items:center;gap:6px;font:700 12px/1 var(--sans);color:var(--live);letter-spacing:.08em}
+.livedot::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--live);animation:pulse 1.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,59,79,.6)}70%{box-shadow:0 0 0 8px rgba(255,59,79,0)}100%{box-shadow:0 0 0 0 rgba(255,59,79,0)}}
+@media (prefers-reduced-motion:reduce){.livedot::before{animation:none}}
+.spacer{flex:1}
+.tabs{display:flex;gap:4px;padding:4px;background:var(--panel);border:1px solid var(--line);border-radius:999px}
+.tabs button{font:600 14px/1 var(--sans);color:var(--muted);background:none;border:0;padding:8px 16px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.tabs button.on{background:var(--text);color:var(--bg)}
+.tabs button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.sub{display:flex;gap:8px;padding:8px 0 12px;overflow-x:auto;scrollbar-width:none}
+.sub::-webkit-scrollbar{display:none}
+.chip{flex:none;padding:6px 13px;border-radius:999px;border:1px solid var(--line);font-size:12.5px;font-weight:600;color:var(--muted);white-space:nowrap}
+.chip.on{border-color:var(--accent);color:var(--accent);background:rgba(36,255,193,.1)}
+.amain{padding:20px 18px 24px}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:20px;align-items:start}
+.label{font:700 13px/1 var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:20px 2px 10px;display:flex;align-items:center;gap:8px}
+.label:first-child{margin-top:0}
+.label.live{color:var(--live)}
+.pins{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.big{position:relative;background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:20px;padding:14px 14px 12px;overflow:hidden}
+.big::before{content:'';position:absolute;inset:0;background:linear-gradient(110deg,var(--hc) 0%,transparent 38%,transparent 62%,var(--ac) 100%);opacity:.18;pointer-events:none}
+.big.is-live{border-color:rgba(255,59,79,.45)}
+.bhead{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.04em;text-transform:uppercase;position:relative}
+.pill{font:700 11px/1 var(--sans);padding:5px 9px;border-radius:999px;background:var(--line);color:var(--text);letter-spacing:.04em}
+.pill.live{background:var(--live);color:#fff}
+.pill.ft{background:transparent;border:1px solid var(--line);color:var(--muted)}
+.bbody{display:grid;grid-template-columns:1fr auto 1fr;align-items:start;gap:6px;margin-top:12px;position:relative}
+.bteam{display:flex;flex-direction:column;align-items:center;text-align:center;gap:7px;min-width:0}
+.bteam .nm{font-weight:700;font-size:14px;line-height:1.2}
+.bscore{font:700 46px/1 var(--cond);padding-top:4px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.bscore.vs{font-size:28px;color:var(--muted);padding-top:12px}
+.bscore small{display:block;font:600 12px/1.2 var(--sans);color:var(--muted);text-align:center;margin-top:6px}
+.scorers{display:grid;grid-template-columns:1fr 1fr;gap:3px 18px;margin-top:10px;font-size:11.5px;color:var(--muted);position:relative;text-align:center}
+.bfoot{margin-top:10px;font-size:11.5px;color:var(--dim);text-align:center;position:relative}
+.crest{border-radius:50%;display:inline-grid;place-items:center;font:700 10px/1 var(--sans);color:#fff;background:var(--c,#334);flex:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
+.bteam .crest{width:52px;height:52px;font-size:13px}
+.list{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.row{display:grid;grid-template-columns:52px minmax(0,1fr) minmax(60px,auto) minmax(0,1fr);align-items:center;gap:8px;padding:10px 12px;border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.row .t{font-size:12px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums}
+.row .t.live{color:var(--live)}
+.row .h,.row .a{display:flex;align-items:center;gap:8px;min-width:0;font-weight:500}
+.row .h{justify-content:flex-end;text-align:right}
+.row .h span,.row .a span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .crest{width:22px;height:22px;font-size:7.5px}
+.row .s{white-space:nowrap;text-align:center;font:700 18px/1 var(--cond);font-variant-numeric:tabular-nums;letter-spacing:.03em}
+.row .s.vs{font:500 12px/1 var(--sans);color:var(--dim)}
+.row .lose{color:var(--muted)}
+.row .win{font-weight:700}
+.row.fav{background:rgba(255,201,64,.06)}
+.row.fav .t::after{content:' ★';color:var(--gold)}
+.lg{display:block;font-size:9.5px;color:var(--dim);font-weight:600;letter-spacing:.06em;margin-top:2px}
+.tbl{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.tbl h3{font:700 15px/1 var(--cond);letter-spacing:.12em;text-transform:uppercase;padding:14px 14px 10px;margin:0}
+.tbl table{width:100%;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums}
+.tbl th{font-size:10.5px;font-weight:600;color:var(--dim);text-align:center;padding:6px 4px;border-bottom:1px solid var(--line)}
+.tbl th.tm{text-align:left}
+.tbl td{padding:6px 4px;text-align:center;border-bottom:1px solid rgba(35,42,55,.6)}
+.tbl tr:last-child td{border-bottom:0}
+.tbl td.pos{width:30px;color:var(--muted);font-weight:600;border-left:3px solid var(--z,transparent)}
+.tbl td.tm{text-align:left}
+.tbl td.tm div{display:flex;align-items:center;gap:8px;min-width:0}
+.tbl td.tm span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:130px}
+.tbl td.tm .crest{width:18px;height:18px;font-size:6.5px}
+.tbl td.pts{font-weight:700}
+.tbl td.m{color:var(--muted)}
+.tbl tr.fav td{background:rgba(255,201,64,.08)}
+.tbl tr.fav td.tm span{font-weight:700}
+.legend{display:flex;flex-wrap:wrap;gap:10px;padding:10px 14px;border-top:1px solid var(--line);font-size:10.5px;color:var(--dim)}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px;vertical-align:0}
+.afoot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;border-top:1px solid var(--line);padding:12px 18px;font-size:11.5px;color:var(--dim)}
+
+/* Mobile frame */
+.phone{width:100%;max-width:340px;margin:0 auto;border:1px solid var(--line);border-radius:34px;padding:10px;background:#0b0e13;box-shadow:0 30px 80px -40px rgba(0,0,0,.9)}
+.phone .screen{border-radius:26px;overflow:hidden;background:var(--bg);height:640px;overflow-y:auto;scrollbar-width:none}
+.phone .screen::-webkit-scrollbar{display:none}
+.phone .top{height:52px;gap:10px}
+.phone .brand{font-size:18px}.phone .brand .logo{width:26px;height:26px}
+.phone .wrap{padding:0 12px}
+.phone .tabs button{padding:7px 12px;font-size:13px}
+.phone .amain{padding:14px 12px 18px}
+.phone .row{grid-template-columns:44px minmax(0,1fr) auto minmax(0,1fr);padding:9px 10px;gap:6px}
+.phone .row .h span,.phone .row .a span{font-size:13px}
+.views{display:flex;justify-content:center;margin-bottom:14px}
+.views .tabs button{padding:6px 18px;font-size:13px}
+
+/* ====== Architecture ====== */
+.arch{display:grid;grid-template-columns:minmax(0,1fr);gap:18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;min-width:0}
+.card h3{font:700 17px/1.1 var(--cond);letter-spacing:.1em;text-transform:uppercase;margin:0 0 12px;color:var(--text)}
+.card p{color:var(--muted);margin:0 0 10px}
+.diagram{overflow-x:auto}
+.diagram svg{display:block;min-width:820px;width:100%;height:auto}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.tree{font:400 12.5px/1.65 var(--mono);color:var(--muted);white-space:pre;overflow-x:auto;margin:0}
+.tree b{color:var(--text);font-weight:500}
+.tree em{color:var(--dim);font-style:normal}
+.tbl-wrap{overflow-x:auto}
+table.spec{width:100%;border-collapse:collapse;font-size:13px;min-width:620px}
+table.spec th{text-align:left;font:700 12px/1 var(--cond);letter-spacing:.12em;text-transform:uppercase;color:var(--dim);padding:8px 10px;border-bottom:1px solid var(--line)}
+table.spec td{padding:9px 10px;border-bottom:1px solid rgba(35,42,55,.7);vertical-align:top;color:var(--muted)}
+table.spec td:first-child{color:var(--text);font-weight:600;white-space:nowrap}
+table.spec tr:last-child td{border-bottom:0}
+.tag{display:inline-block;font:600 11px/1 var(--sans);padding:4px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted);margin:2px 4px 2px 0;white-space:nowrap}
+.tag.ok{border-color:rgba(36,255,193,.4);color:var(--accent)}
+.tag.warn{border-color:rgba(255,201,64,.45);color:var(--gold)}
+pre.json{margin:0;font:400 12.5px/1.6 var(--mono);color:#b9c4d6;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:14px 16px;overflow-x:auto}
+pre.json .k{color:var(--accent)}pre.json .c{color:var(--dim)}
+ol.steps{margin:0;padding-left:20px;color:var(--muted)}
+ol.steps li{margin:6px 0}
+ol.steps li b{color:var(--text)}
+.q{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.q .card h3{font-size:15px}
+.q .card p{font-size:14px}
+.q .prop{color:var(--accent);font-weight:600}
+.go{margin-top:28px;border:1px dashed rgba(36,255,193,.45);border-radius:var(--r);padding:18px 20px;color:var(--muted)}
+.go b{color:var(--accent)}
+
+@media (max-width:1060px){.frames{grid-template-columns:minmax(0,1fr)}.grid{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:760px){
+  .two{grid-template-columns:minmax(0,1fr)}
+  .desk-only{display:none}
+  .doc-head h1{font-size:34px}
+}
+</style>
+
+<div class="page">
+  <div class="doc-head">
+    <span class="eyebrow">ScoreWeb · étape 1 sur 2 · à valider avant le code</span>
+    <h1>Maquette &amp; architecture</h1>
+    <p>Une interface web Node.js qui affiche la NBA et le football, avec la mise en page et le style de la page de référence (en-tête collant, onglets en pilules, cartes « Mes équipes », listes de matchs, classement dans une colonne à droite). Les données viennent de votre proxy Docker <code>192.168.1.74:8100</code> (<code>/nbadata</code> et <code>/soccer</code>). Les scores de la maquette sont des exemples basés sur des réponses réelles du proxy du 16/11/2026.</p>
+    <nav class="toc" aria-label="Sections">
+      <a href="#maquette">1. Maquette</a>
+      <a href="#architecture">2. Architecture</a>
+      <a href="#donnees">3. Correspondance des données</a>
+      <a href="#questions">4. Points à valider</a>
+    </nav>
+  </div>
+
+  <!-- ===================== 1. MAQUETTE ===================== -->
+  <section class="block" id="maquette">
+    <h2>1. Maquette <small>bureau : onglet Football · mobile : onglet NBA</small></h2>
+    <p class="lead">Deux onglets de sport seulement. Sous l'en-tête, les pastilles filtrent par compétition (football) ou par conférence (NBA). Les cartes du haut sont les équipes épinglées avec ☆. Elles sont gardées dans le navigateur et se suivent d'un onglet à l'autre.</p>
+
+    <div class="frames">
+      <!-- ---------- Desktop ---------- -->
+      <div>
+        <div class="browser">
+          <div class="chrome"><i></i><i></i><i></i><div class="url">http://192.168.1.74:3000/#football</div></div>
+          <div class="app">
+            <header>
+              <div class="wrap">
+                <div class="top">
+                  <div class="brand"><span class="logo">S</span><span>Score <b>Web</b></span></div>
+                  <div class="livedot">EN DIRECT</div>
+                  <div class="spacer"></div>
+                  <nav class="tabs" aria-label="Sport (maquette)"><button class="on" type="button">Football</button><button type="button">NBA</button></nav>
+                </div>
+                <div class="sub">
+                  <span class="chip on">Tout</span><span class="chip">Ligue 1</span><span class="chip">Premier League</span><span class="chip">LaLiga</span><span class="chip">Serie A</span><span class="chip">Bundesliga</span><span class="chip">Ligue des champions</span><span class="chip">Ligue Europa</span><span class="chip">Nations League</span><span class="chip">Coupes</span>
+                </div>
+              </div>
+            </header>
+            <div class="amain">
+              <div class="grid">
+                <div>
+                  <div class="label">★ Mes équipes</div>
+                  <div class="pins">
+                    <div class="big is-live" style="--hc:#011F68;--ac:#ffffff">
+                      <div class="bhead"><span>Ligue 1 · J11</span><span class="pill live">67′</span></div>
+                      <div class="bbody">
+                        <div class="bteam"><span class="crest" style="--c:#011F68">PSG</span><span class="nm">Paris SG</span></div>
+                        <div class="bscore">2 – 1<small>2e mi-temps</small></div>
+                        <div class="bteam"><span class="crest" style="--c:#2b6fb7">OM</span><span class="nm">Marseille</span></div>
+                      </div>
+                      <div class="scorers"><div>⚽ Dembélé 12′<br>⚽ Barcola 58′</div><div>⚽ Greenwood 34′<br>🟨 Højbjerg 41′</div></div>
+                      <div class="bfoot">Parc des Princes</div>
+                    </div>
+                    <div class="big" style="--hc:#c2051b;--ac:#1a1a1a">
+                      <div class="bhead"><span>Ligue 1 · J11</span><span class="pill">Dim. 17:00</span></div>
+                      <div class="bbody">
+                        <div class="bteam"><span class="crest" style="--c:#c2051b">LIL</span><span class="nm">Lille</span></div>
+                        <div class="bscore vs">VS<small>dans 2 j</small></div>
+                        <div class="bteam"><span class="crest" style="--c:#7a1f2b">NAN</span><span class="nm">Nantes</span></div>
+                      </div>
+                      <div class="bfoot">2e · 21 pts &nbsp;|&nbsp; 14e · 11 pts</div>
+                    </div>
+                  </div>
+
+                  <div class="label live">● En direct</div>
+                  <div class="list">
+                    <div class="row fav"><span class="t live">67′</span><div class="h"><span>Paris SG</span><i class="crest" style="--c:#011F68">PSG</i></div><span class="s">2 – 1</span><div class="a"><i class="crest" style="--c:#2b6fb7">OM</i><span>Marseille</span></div></div>
+                    <div class="row"><span class="t live">MT<span class="lg">NATIONS</span></span><div class="h"><span>Allemagne</span><i class="crest" style="--c:#555">GER</i></div><span class="s">1 – 0</span><div class="a"><i class="crest" style="--c:#0c2fff">NED</i><span>Pays-Bas</span></div></div>
+                  </div>
+
+                  <div class="label">Aujourd'hui · lun. 16 nov.</div>
+                  <div class="list">
+                    <div class="row"><span class="t">16:00<span class="lg">NATIONS</span></span><div class="h"><span>Îles Féroé</span><i class="crest" style="--c:#3d5a80">FRO</i></div><span class="s vs">vs</span><div class="a"><i class="crest" style="--c:#0046ae">MDA</i><span>Moldavie</span></div></div>
+                    <div class="row"><span class="t">18:00<span class="lg">NATIONS</span></span><div class="h"><span>Islande</span><i class="crest" style="--c:#0c2fff">ISL</i></div><span class="s vs">vs</span><div class="a"><i class="crest" style="--c:#E70000">LUX</i><span>Luxembourg</span></div></div>
+                    <div class="row"><span class="t">20:45<span class="lg">NATIONS</span></span><div class="h"><span>Gibraltar</span><i class="crest" style="--c:#DE2918">GIB</i></div><span class="s vs">vs</span><div class="a"><i class="crest" style="--c:#a51c1c">MLT</i><span>Malte</span></div></div>
+                  </div>
+
+                  <div class="label">Hier · résultats</div>
+                  <div class="list">
+                    <div class="row"><span class="t">FT<span class="lg">C. DE FRANCE</span></span><div class="h lose"><span>Veauche</span><i class="crest" style="--c:#333">VEA</i></div><span class="s">1 – 3</span><div class="a win"><i class="crest" style="--c:#2f4a7a">JAR</i><span>St Paul en Jarez</span></div></div>
+                    <div class="row"><span class="t">FT<span class="lg">C. DE FRANCE</span></span><div class="h lose"><span>Riom</span><i class="crest" style="--c:#333">FCR</i></div><span class="s">0 – 4</span><div class="a win"><i class="crest" style="--c:#1f5f9e">LIM</i><span>FC Limonest</span></div></div>
+                  </div>
+
+                  <div class="label">Demain · mar. 17 nov.</div>
+                  <div class="list">
+                    <div class="row"><span class="t">20:45<span class="lg">NATIONS</span></span><div class="h"><span>France</span><i class="crest" style="--c:#002395">FRA</i></div><span class="s vs">vs</span><div class="a"><i class="crest" style="--c:#C8102E">ENG</i><span>Angleterre</span></div></div>
+                  </div>
+                </div>
+
+                <aside>
+                  <div class="tbl">
+                    <h3>Ligue 1 · Classement</h3>
+                    <table>
+                      <thead><tr><th>#</th><th class="tm">Équipe</th><th>J</th><th>DB</th><th>Pts</th></tr></thead>
+                      <tbody>
+                        <tr class="fav"><td class="pos" style="--z:#81D6AC">1</td><td class="tm"><div><i class="crest" style="--c:#011F68">PSG</i><span>Paris SG</span></div></td><td class="m">10</td><td class="m">+12</td><td class="pts">23</td></tr>
+                        <tr class="fav"><td class="pos" style="--z:#81D6AC">2</td><td class="tm"><div><i class="crest" style="--c:#c2051b">LIL</i><span>Lille</span></div></td><td class="m">10</td><td class="m">+7</td><td class="pts">21</td></tr>
+                        <tr><td class="pos" style="--z:#81D6AC">3</td><td class="tm"><div><i class="crest" style="--c:#24364f">PFC</i><span>Paris FC</span></div></td><td class="m">10</td><td class="m">+7</td><td class="pts">20</td></tr>
+                        <tr><td class="pos" style="--z:#B5E7CE">4</td><td class="tm"><div><i class="crest" style="--c:#2b6fb7">OM</i><span>Marseille</span></div></td><td class="m">10</td><td class="m">+8</td><td class="pts">18</td></tr>
+                        <tr><td class="pos" style="--z:#6f8cff">5</td><td class="tm"><div><i class="crest" style="--c:#c8102e">LYO</i><span>Lyon</span></div></td><td class="m">10</td><td class="m">+5</td><td class="pts">17</td></tr>
+                        <tr><td class="pos">6</td><td class="tm"><div><i class="crest" style="--c:#E91514">MON</i><span>Monaco</span></div></td><td class="m">10</td><td class="m">+3</td><td class="pts">16</td></tr>
+                        <tr><td class="pos">…</td><td class="tm"><div><span style="color:var(--dim)">Afficher les 18 équipes</span></div></td><td></td><td></td><td></td></tr>
+                      </tbody>
+                    </table>
+                    <div class="legend"><span><i style="background:#81D6AC"></i>Ligue des champions</span><span><i style="background:#B5E7CE"></i>Qualif. LdC</span><span><i style="background:#6f8cff"></i>Ligue Europa</span></div>
+                  </div>
+                </aside>
+              </div>
+            </div>
+            <div class="afoot"><span>Données : proxy info-orbs (ESPN) · mise à jour il y a 12 s</span><span>Fuseau : Europe/Paris</span></div>
+          </div>
+        </div>
+        <p class="cap">Bureau ≥ 1060 px : liste des matchs à gauche, classement collant à droite (comme la page de référence).</p>
+      </div>
+
+      <!-- ---------- Mobile ---------- -->
+      <div>
+        <div class="phone">
+          <div class="screen app">
+            <header>
+              <div class="wrap">
+                <div class="top">
+                  <div class="brand"><span class="logo">S</span><span>Score <b>Web</b></span></div>
+                  <div class="spacer"></div>
+                  <nav class="tabs" aria-label="Sport mobile (maquette)"><button type="button">Football</button><button class="on" type="button">NBA</button></nav>
+                </div>
+                <div class="sub"><span class="chip on">Tout</span><span class="chip">Est</span><span class="chip">Ouest</span></div>
+              </div>
+            </header>
+            <div class="amain">
+              <div class="views"><nav class="tabs" aria-label="Vue (maquette)"><button class="on" type="button">Matchs</button><button type="button">Classement</button></nav></div>
+              <div class="label">★ Mes équipes</div>
+              <div class="big" style="--hc:#006BB6;--ac:#0c2340">
+                <div class="bhead"><span>NBA · saison régulière</span><span class="pill ft">FINAL</span></div>
+                <div class="bbody">
+                  <div class="bteam"><span class="crest" style="--c:#006BB6">PHI</span><span class="nm">76ers</span></div>
+                  <div class="bscore">131–124<small>Final</small></div>
+                  <div class="bteam"><span class="crest" style="--c:#0c2340">IND</span><span class="nm">Pacers</span></div>
+                </div>
+                <div class="scorers"><div>J. Brown 31 pts<br>T. Maxey 27 pts</div><div>P. Siakam 31 pts<br>K. Oubre Jr. 16 pts</div></div>
+              </div>
+              <div class="label">Cette nuit · résultats</div>
+              <div class="list">
+                <div class="row fav"><span class="t">FIN</span><div class="h win"><span>PHI</span><i class="crest" style="--c:#006BB6">PHI</i></div><span class="s">131–124</span><div class="a lose"><i class="crest" style="--c:#0c2340">IND</i><span>IND</span></div></div>
+                <div class="row"><span class="t">FIN</span><div class="h lose"><span>MIA</span><i class="crest" style="--c:#98002E">MIA</i></div><span class="s">108–115</span><div class="a win"><i class="crest" style="--c:#C8102E">ATL</i><span>ATL</span></div></div>
+              </div>
+              <div class="label">Nuit prochaine</div>
+              <div class="list">
+                <div class="row"><span class="t">01:00</span><div class="h"><span>BOS</span><i class="crest" style="--c:#008348">BOS</i></div><span class="s vs">vs</span><div class="a"><i class="crest" style="--c:#0150b5">ORL</i><span>ORL</span></div></div>
+                <div class="row"><span class="t">01:00</span><div class="h"><span>CLE</span><i class="crest" style="--c:#860038">CLE</i></div><span class="s vs">vs</span><div class="a"><i class="crest" style="--c:#ce1141">CHI</i><span>CHI</span></div></div>
+                <div class="row"><span class="t">01:00</span><div class="h"><span>WSH</span><i class="crest" style="--c:#e31837">WSH</i></div><span class="s vs">vs</span><div class="a"><i class="crest" style="--c:#5d76a9">MEM</i><span>MEM</span></div></div>
+              </div>
+              <div class="label">Classement · Est</div>
+              <div class="tbl">
+                <table>
+                  <thead><tr><th>#</th><th class="tm">Équipe</th><th>V</th><th>D</th><th>Série</th></tr></thead>
+                  <tbody>
+                    <tr><td class="pos">1</td><td class="tm"><div><i class="crest" style="--c:#007A33">BOS</i><span>Celtics</span></div></td><td class="pts">11</td><td class="m">2</td><td class="m">V6</td></tr>
+                    <tr class="fav"><td class="pos">2</td><td class="tm"><div><i class="crest" style="--c:#006BB6">PHI</i><span>76ers</span></div></td><td class="pts">11</td><td class="m">3</td><td class="m">V2</td></tr>
+                    <tr><td class="pos">3</td><td class="tm"><div><i class="crest" style="--c:#C8102E">DET</i><span>Pistons</span></div></td><td class="pts">8</td><td class="m">4</td><td class="m">D1</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="cap">Mobile : une seule colonne, bascule Matchs / Classement (comme la référence).</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 2. ARCHITECTURE ===================== -->
+  <section class="block" id="architecture">
+    <h2>2. Architecture logicielle <small>Node.js 20+ · Express · HTML/CSS/JS sans framework</small></h2>
+    <p class="lead">Un petit serveur Node.js sert de passerelle (BFF) entre le navigateur et le proxy Docker. Il interroge le proxy en tâche de fond, met les deux sports au même format et sert les logos. Le navigateur ne parle qu'au serveur Node, ce qui évite les problèmes de CORS et cache l'adresse interne du proxy.</p>
+
+    <div class="arch">
+      <div class="card diagram">
+        <h3>Flux de données</h3>
+        <svg viewBox="0 0 1000 360" role="img" aria-label="Navigateur vers serveur Node ScoreWeb, qui interroge le proxy Docker info-orbs et le CDN ESPN pour les logos">
+          <defs>
+            <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#8a95a8"/></marker>
+          </defs>
+          <!-- Browser -->
+          <rect x="10" y="40" width="220" height="280" rx="16" fill="#10141b" stroke="#232a37"/>
+          <text x="30" y="72" fill="#eef2f7" font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="20" letter-spacing="1.5">NAVIGATEUR</text>
+          <text x="30" y="98" fill="#8a95a8" font-family="Inter, sans-serif" font-size="13">public/index.html</text>
+          <text x="30" y="118" fill="#8a95a8" font-family="Inter, sans-serif" font-size="13">public/css/styles.css</text>
+          <text x="30" y="138" fill="#8a95a8" font-family="Inter, sans-serif" font-size="13">public/js/*.js (modules ES)</text>
+          <rect x="30" y="160" width="180" height="40" rx="10" fill="#161b24" stroke="#232a37"/>
+          <text x="120" y="185" text-anchor="middle" fill="#eef2f7" font-family="Inter, sans-serif" font-size="13">Rendu + état (onglet, filtre)</text>
+          <rect x="30" y="210" width="180" height="40" rx="10" fill="#161b24" stroke="#232a37"/>
+          <text x="120" y="235" text-anchor="middle" fill="#eef2f7" font-family="Inter, sans-serif" font-size="13">Rafraîchis. 30 s / 5 min</text>
+          <rect x="30" y="260" width="180" height="40" rx="10" fill="#161b24" stroke="#ffc940" stroke-opacity=".5"/>
+          <text x="120" y="285" text-anchor="middle" fill="#ffc940" font-family="Inter, sans-serif" font-size="13">★ favoris (localStorage)</text>
+
+          <!-- Node -->
+          <rect x="330" y="20" width="330" height="320" rx="16" fill="#0d1a17" stroke="#24FFC1" stroke-opacity=".55"/>
+          <text x="350" y="52" fill="#24FFC1" font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="20" letter-spacing="1.5">SERVEUR NODE · :3000</text>
+          <rect x="350" y="68" width="290" height="44" rx="10" fill="#10141b" stroke="#232a37"/>
+          <text x="365" y="95" fill="#eef2f7" font-family="JetBrains Mono, monospace" font-size="12.5">routes/api.js   /api/board · /api/standings</text>
+          <rect x="350" y="122" width="140" height="56" rx="10" fill="#10141b" stroke="#232a37"/>
+          <text x="420" y="146" text-anchor="middle" fill="#eef2f7" font-family="Inter, sans-serif" font-size="13">poller.js</text>
+          <text x="420" y="165" text-anchor="middle" fill="#8a95a8" font-family="Inter, sans-serif" font-size="11.5">15 s live · 5 min sinon</text>
+          <rect x="500" y="122" width="140" height="56" rx="10" fill="#10141b" stroke="#232a37"/>
+          <text x="570" y="146" text-anchor="middle" fill="#eef2f7" font-family="Inter, sans-serif" font-size="13">cache.js</text>
+          <text x="570" y="165" text-anchor="middle" fill="#8a95a8" font-family="Inter, sans-serif" font-size="11.5">mémoire + dernier OK</text>
+          <rect x="350" y="188" width="290" height="56" rx="10" fill="#10141b" stroke="#232a37"/>
+          <text x="495" y="212" text-anchor="middle" fill="#eef2f7" font-family="Inter, sans-serif" font-size="13">normalize/nba.js · normalize/football.js</text>
+          <text x="495" y="231" text-anchor="middle" fill="#8a95a8" font-family="Inter, sans-serif" font-size="11.5">→ un format Match / Standing commun</text>
+          <rect x="350" y="254" width="290" height="70" rx="10" fill="#10141b" stroke="#232a37"/>
+          <text x="495" y="278" text-anchor="middle" fill="#eef2f7" font-family="Inter, sans-serif" font-size="13">logos.js  /api/logo/:sport/:id</text>
+          <text x="495" y="297" text-anchor="middle" fill="#8a95a8" font-family="Inter, sans-serif" font-size="11.5">cache disque · repli : pastille couleur + sigle</text>
+          <text x="495" y="314" text-anchor="middle" fill="#8a95a8" font-family="Inter, sans-serif" font-size="11.5">upstream.js : fetch, timeout 8 s, ETag</text>
+
+          <!-- Docker -->
+          <rect x="760" y="20" width="230" height="210" rx="16" fill="#10141b" stroke="#6f8cff" stroke-opacity=".55"/>
+          <text x="780" y="52" fill="#6f8cff" font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="20" letter-spacing="1.5">PROXY DOCKER</text>
+          <text x="780" y="74" fill="#8a95a8" font-family="JetBrains Mono, monospace" font-size="12">192.168.1.74:8100</text>
+          <text x="780" y="104" fill="#eef2f7" font-family="JetBrains Mono, monospace" font-size="12">/nbadata/scores</text>
+          <text x="780" y="124" fill="#eef2f7" font-family="JetBrains Mono, monospace" font-size="12">/nbadata/upcoming</text>
+          <text x="780" y="144" fill="#eef2f7" font-family="JetBrains Mono, monospace" font-size="12">/nbadata/standings</text>
+          <text x="780" y="170" fill="#eef2f7" font-family="JetBrains Mono, monospace" font-size="12">/soccer/scores · /upcoming</text>
+          <text x="780" y="190" fill="#eef2f7" font-family="JetBrains Mono, monospace" font-size="12">/soccer/lastMatches</text>
+          <text x="780" y="210" fill="#eef2f7" font-family="JetBrains Mono, monospace" font-size="12">/soccer/{key}Standings|Teams</text>
+
+          <!-- ESPN CDN -->
+          <rect x="760" y="260" width="230" height="80" rx="16" fill="#10141b" stroke="#232a37" stroke-dasharray="5 4"/>
+          <text x="780" y="290" fill="#eef2f7" font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="18" letter-spacing="1.5">CDN ESPN (LOGOS)</text>
+          <text x="780" y="314" fill="#8a95a8" font-family="JetBrains Mono, monospace" font-size="11">a.espncdn.com/i/teamlogos</text>
+
+          <!-- arrows -->
+          <path d="M230 120 L330 120" stroke="#8a95a8" stroke-width="1.6" fill="none" marker-end="url(#ar)"/>
+          <text x="280" y="110" text-anchor="middle" fill="#8a95a8" font-family="Inter, sans-serif" font-size="11">GET /api/*</text>
+          <path d="M330 160 L230 160" stroke="#8a95a8" stroke-width="1.6" fill="none" marker-end="url(#ar)"/>
+          <text x="280" y="178" text-anchor="middle" fill="#8a95a8" font-family="Inter, sans-serif" font-size="11">JSON</text>
+          <path d="M660 140 L760 140" stroke="#6f8cff" stroke-width="1.6" fill="none" marker-end="url(#ar)"/>
+          <text x="710" y="130" text-anchor="middle" fill="#6f8cff" font-family="Inter, sans-serif" font-size="11">poll HTTP</text>
+          <path d="M660 300 L760 300" stroke="#8a95a8" stroke-width="1.6" fill="none" stroke-dasharray="4 4" marker-end="url(#ar)"/>
+          <text x="710" y="290" text-anchor="middle" fill="#8a95a8" font-family="Inter, sans-serif" font-size="11">1re demande</text>
+        </svg>
+      </div>
+
+      <div class="two">
+        <div class="card">
+          <h3>Arborescence prévue</h3>
+<pre class="tree"><b>ScoreWebProxy/</b>
+├─ <b>package.json</b>          <em># express, scripts start/dev/test</em>
+├─ <b>.env.example</b>          <em># UPSTREAM_URL, PORT, TZ…</em>
+├─ <b>Dockerfile</b> · docker-compose.yml
+├─ <b>config/leagues.json</b>   <em># compétitions affichées + libellés</em>
+├─ <b>server/</b>
+│  ├─ index.js            <em># démarrage Express + statique</em>
+│  ├─ config.js           <em># lecture .env, valeurs par défaut</em>
+│  ├─ upstream.js         <em># fetch proxy (timeout, ETag)</em>
+│  ├─ poller.js           <em># cadence live / idle</em>
+│  ├─ cache.js            <em># instantanés en mémoire</em>
+│  ├─ normalize/nba.js
+│  ├─ normalize/football.js
+│  ├─ logos.js            <em># cache disque + repli SVG</em>
+│  └─ routes/api.js
+├─ <b>public/</b>
+│  ├─ index.html
+│  ├─ css/styles.css
+│  └─ js/ app.js · api.js · render.js · favorites.js · time.js
+├─ <b>test/</b>                 <em># node:test + exemples JSON réels</em>
+├─ <b>cache/logos/</b>          <em># créé à l'exécution, ignoré par git</em>
+└─ <b>README.md</b></pre>
+        </div>
+
+        <div class="card">
+          <h3>API exposée au navigateur</h3>
+          <div class="tbl-wrap">
+          <table class="spec" style="min-width:0">
+            <thead><tr><th>Route</th><th>Rôle</th></tr></thead>
+            <tbody>
+              <tr><td><code>GET /api/config</code></td><td>Sports, compétitions (pastilles), fuseau, cadence de rafraîchissement</td></tr>
+              <tr><td><code>GET /api/board/:sport</code></td><td><code>nba</code> | <code>football</code> · <code>?league=</code>. Renvoie les sections <i>live</i>, <i>today</i>, <i>results</i>, <i>upcoming</i> et <code>hasLive</code></td></tr>
+              <tr><td><code>GET /api/standings/:sport</code></td><td><code>?league=ligue1</code> ou <code>?conference=East</code></td></tr>
+              <tr><td><code>GET /api/logo/:sport/:id</code></td><td>PNG mis en cache, sinon SVG pastille couleur + sigle</td></tr>
+              <tr><td><code>GET /healthz</code></td><td>État du serveur et des dernières requêtes vers le proxy</td></tr>
+            </tbody>
+          </table>
+          </div>
+          <p style="margin-top:14px">Format commun d'un match (identique pour NBA et foot) :</p>
+<pre class="json">{
+  <span class="k">"id"</span>: "401909985", <span class="k">"sport"</span>: "nba",
+  <span class="k">"league"</span>: { "key": "nba", "short": "NBA" },
+  <span class="k">"status"</span>: "pre | in | post",
+  <span class="k">"time"</span>: "01:00", <span class="k">"clock"</span>: "Q3 4:12",
+  <span class="k">"home"</span>: { "name", "abbr", "score", "color",
+            "logo": "/api/logo/nba/phi", "winner" },
+  <span class="k">"away"</span>: { … },
+  <span class="k">"details"</span>: { "goals": [], "cards": [],
+               "topScorers": [] }  <span class="c">// selon le sport</span>
+}</pre>
+        </div>
+      </div>
+
+      <div class="two">
+        <div class="card">
+          <h3>Cycle de rafraîchissement</h3>
+          <ol class="steps">
+            <li><b>Serveur → proxy</b> : toutes les <b>15 s</b> si un match est en cours ou commence dans 10 min, sinon toutes les <b>5 min</b>. Le proxy rafraîchit déjà ESPN de son côté (10 à 20 s en direct), donc on ne surcharge rien.</li>
+            <li><b>Si le proxy ne répond pas</b> : on garde le dernier instantané valide et on l'indique en pied de page (« données d'il y a 3 min »).</li>
+            <li><b>Navigateur → serveur</b> : toutes les <b>30 s</b> si <code>hasLive</code>, sinon <b>5 min</b>, et immédiatement au retour sur l'onglet (comme la référence).</li>
+            <li><b>Logos</b> : téléchargés une fois depuis le CDN ESPN puis servis depuis <code>cache/logos/</code> avec <code>Cache-Control</code> de 30 jours.</li>
+          </ol>
+        </div>
+        <div class="card">
+          <h3>Choix techniques</h3>
+          <p><span class="tag ok">Node 20+</span><span class="tag ok">Express (seule dépendance)</span><span class="tag ok">fetch natif</span><span class="tag ok">node:test</span><span class="tag ok">JS vanilla, modules ES</span><span class="tag ok">CSS sans préprocesseur</span></p>
+          <p>Pas de framework côté client : la page est un rendu de chaînes HTML à partir du JSON, comme la référence. Polices Barlow Condensed + Inter, thème sombre, accent menthe, rouge pour le direct, or pour les favoris.</p>
+          <p>Le serveur peut tourner seul (<code>npm start</code>) ou dans un conteneur à côté du proxy (<code>docker compose up -d</code>).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 3. DONNÉES ===================== -->
+  <section class="block" id="donnees">
+    <h2>3. Correspondance des données <small>vérifiée sur le proxy en direct</small></h2>
+    <p class="lead">Les routes ci-dessous répondent toutes sur <code>192.168.1.74:8100</code>. Les heures sont demandées avec <code>?tz=Europe/Paris</code>.</p>
+    <div class="card tbl-wrap">
+      <table class="spec">
+        <thead><tr><th>Section de l'écran</th><th>NBA</th><th>Football</th></tr></thead>
+        <tbody>
+          <tr><td>En direct / Aujourd'hui</td><td><code>/nbadata/scores</code> : journée ESPN en cours, avec chrono, quart-temps et dernière action</td><td><code>/soccer/scores</code> : avec buts et cartons</td></tr>
+          <tr><td>Résultats (hier)</td><td>Inclus dans <code>/nbadata/scores</code> : la journée ESPN bascule vers midi heure de New York, donc les matchs de la nuit y restent toute la matinée en France. <span class="tag warn">pas de route « hier »</span></td><td><code>/soccer/lastMatches</code></td></tr>
+          <tr><td>À venir (demain)</td><td><code>/nbadata/upcoming</code></td><td><code>/soccer/upcoming</code></td></tr>
+          <tr><td>Classement</td><td><code>/nbadata/standings</code> : Est / Ouest, séries, domicile / extérieur</td><td><code>/soccer/{key}Standings</code> avec zones colorées (LdC, relégation…). Pas de classement pour les coupes.</td></tr>
+          <tr><td>Fiche des équipes favorites</td><td>Meilleurs marqueurs des matchs terminés (<code>topScorers</code>)</td><td>Buteurs et cartons (<code>goals</code>, <code>cards</code>)</td></tr>
+          <tr><td>Logos</td><td>Sigle → <code>a.espncdn.com/i/teamlogos/nba/500/{sigle}.png</code> (avec une table pour les cas particuliers : GSW→gs, NYK→ny, NOP→no, SAS→sa, UTA→utah)</td><td>Les matchs ne donnent pas l'ID d'équipe : on le retrouve par le nom via <code>/soccer/{key}Teams</code>, puis <code>…/soccer/500/{id}.png</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="lead" style="margin-top:14px"><span class="tag warn">Constat</span> Sur le serveur Docker, <code>/nbadata/logo/</code> et <code>/soccer/logo/</code> renvoient 404 : les dossiers de logos ne sont pas remplis. D'où le service de logos côté Node, qui ne dépend pas de ces dossiers.</p>
+  </section>
+
+  <!-- ===================== 4. QUESTIONS ===================== -->
+  <section class="block" id="questions">
+    <h2>4. Points à valider</h2>
+    <p class="lead">J'ai mis une proposition par défaut pour chaque point. Il suffit de me dire ce qui change.</p>
+    <div class="q">
+      <div class="card"><h3>Nom et logo</h3><p>La référence est le produit d'une autre société : je reprends sa mise en page et son style, mais pas son nom ni son logo.</p><p class="prop">Proposition : « ScoreWeb », avec un logo « S » simple.</p></div>
+      <div class="card"><h3>Compétitions de foot</h3><p>Le proxy en suit 23. Pastilles proposées : Ligue 1, Premier League, LaLiga, Serie A, Bundesliga, Ligue des champions, Ligue Europa, Nations League, et « Coupes » qui regroupe les coupes nationales.</p><p class="prop">Liste modifiable dans <code>config/leagues.json</code>.</p></div>
+      <div class="card"><h3>Langue et fuseau</h3><p>Interface en français, heures en 24 h, fuseau Europe/Paris.</p><p class="prop">Proposition : FR uniquement pour l'instant.</p></div>
+      <div class="card"><h3>Déploiement</h3><p>Un conteneur séparé sur le même hôte Docker, port 3000, avec <code>UPSTREAM_URL=http://192.168.1.74:8100</code>.</p><p class="prop">Alternative : <code>npm start</code> sur votre poste.</p></div>
+      <div class="card"><h3>Hors périmètre (v1)</h3><p>Pas d'application installable (PWA), pas de vidéos de résumés, pas de page détaillée par match. Tout peut s'ajouter ensuite.</p></div>
+    </div>
+    <div class="go">Quand la maquette et l'architecture vous conviennent, répondez <b>GO</b>, avec vos modifications s'il y en a. Je coderai alors le serveur, l'interface, les tests et le README dans <code>ScoreWebProxy/</code>.</div>
+  </section>
+</div>

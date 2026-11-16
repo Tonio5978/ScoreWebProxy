@@ -1,0 +1,25 @@
+services:
+  scoreweb:
+    build: .
+    container_name: scoreweb
+    environment:                              # Values from .env when present, else these defaults
+      UPSTREAM_URL: ${UPSTREAM_URL:-http://192.168.1.74:8100}
+      DISPLAY_TZ: ${DISPLAY_TZ:-Europe/Paris}
+      LIVE_REFRESH_SECONDS: ${LIVE_REFRESH_SECONDS:-15}
+      IDLE_REFRESH_SECONDS: ${IDLE_REFRESH_SECONDS:-300}
+      STANDINGS_REFRESH_SECONDS: ${STANDINGS_REFRESH_SECONDS:-600}
+      TEAMS_REFRESH_HOURS: ${TEAMS_REFRESH_HOURS:-12}
+      UPSTREAM_TIMEOUT_MS: ${UPSTREAM_TIMEOUT_MS:-8000}
+    ports:
+      - "${SCOREWEB_PORT:-3100}:3100"
+    volumes:
+      - logo_cache:/app/cache/logos          # Logos downloaded once, kept across rebuilds
+      - ./config:/app/config:ro               # Chips and competitions, editable without rebuilding
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: "2m"
+        max-file: "5"
+
+volumes:
+  logo_cache:
